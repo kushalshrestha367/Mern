@@ -8,11 +8,11 @@ const blogSchema = new mongoose.Schema({
     },
     subtitle: {
         type: String,
-        require: true  
+       
     },
     description: {
         type: String,
-        required: true  
+    
     },
     image: {
         type: String,
