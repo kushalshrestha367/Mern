@@ -11,7 +11,11 @@ const upload = multer({ storage: storage })
 // app.use('/storage', express.static('storage'));
 app.use(express.static('./storage'))
 const fs = require('fs')
-
+const cors =  require('cors')
+app.use(cors({
+    origin: 'http://localhost:5173',
+}))
+app.disable('etag')
 connectDB()
 
 app.get("/",( req,res) => {
@@ -29,13 +33,20 @@ app.get("/contact",(req,res) => {
         "message":"This is the contact page"
     })
 })
-
+//create blog
 app.post("/blog",upload.single('image'), async (req,res) => {
     // console.log(req.body);
     // console.log(req.file);  
    const {title,subtitle,description} = req.body
+   let filename;
+   if(req.file){
+    filename = "http://localhost:3000/" + req.file.filename
+   } 
+   else{
+    filename = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSq4h3BoPmq9yom5f23n6vaKCKG70zHcvAnsA&s"
+   }
 //    const {filename} = req.body
-const filename = req.file.filename
+// const filename = req.file.filename
   
    if(!title || !subtitle || !description ){
     return res.status(400).json({
@@ -52,7 +63,7 @@ const filename = req.file.filename
         "message":"Blog created successfully"
     })
 })
-
+//fetch all blogs
 app.get("/blog", async (req,res) => {
     const blogs = await Blog.find()
     res.status(200).json({
@@ -93,10 +104,13 @@ app.delete("/blog/:id", async(req,res) => {
 //edit blog
 app.patch("/blog/:id",upload.single('image'), async(req,res) => {
     const id = req.params.id
-    const {title,subtitle,description} = req.body
+    // const {title,subtitle,description} = req.body
+      const title = req.body.title || Blog.title
+  const subtitle = req.body.subtitle || Blog.subtitle
+  const description = req.body.description || Blog.description
     let imageName;
     if(req.file){
-        imageName = req.file.filename
+        imageName = "http://localhost:3000/" + req.file.filename
         const blog = await Blog.findById(id)
         const oldImagePath = blog.image
         fs.unlink(`storage/${oldImagePath}`, (err) => {
