@@ -13,8 +13,13 @@ app.use(express.static('./storage'))
 const fs = require('fs')
 const cors =  require('cors')
 app.use(cors({
-    origin: ['http://localhost:5173', "https://blog-front-phi-steel.vercel.app"],
-}))
+  origin: [
+    "http://localhost:5173",
+    "https://blog-front-phi-steel.vercel.app"
+  ],
+  credentials: true
+}));
+
 app.disable('etag')
 connectDB()
 
@@ -40,7 +45,7 @@ app.post("/blog",upload.single('image'), async (req,res) => {
    const {title,subtitle,description} = req.body
    let filename;
    if(req.file){
-    filename = "http://localhost:3000/" + req.file.filename
+    filename = "https://blog-api-i6kb.onrender.com/" + req.file.filename
    } 
    else{
     filename = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSq4h3BoPmq9yom5f23n6vaKCKG70zHcvAnsA&s"
@@ -110,7 +115,7 @@ app.patch("/blog/:id",upload.single('image'), async(req,res) => {
   const description = req.body.description || Blog.description
     let imageName;
     if(req.file){
-        imageName = "http://localhost:3000/" + req.file.filename
+        imageName = "https://blog-api-i6kb.onrender.com/" + req.file.filename
         const blog = await Blog.findById(id)
         const oldImagePath = blog.image
         fs.unlink(`storage/${oldImagePath}`, (err) => {
