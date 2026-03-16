@@ -115,7 +115,7 @@ app.patch("/blog/:id",upload.single('image'), async(req,res) => {
   const description = req.body.description || Blog.description
     let imageName;
     if(req.file){
-        imageName = "https://blog-api-i6kb.onrender.com/" + req.file.filename
+        imageName = "https://blog-api-i6kb.onrender.com" + req.file.filename
         const blog = await Blog.findById(id)
         const oldImagePath = blog.image
         fs.unlink(`storage/${oldImagePath}`, (err) => {
